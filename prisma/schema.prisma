@@ -16,6 +16,7 @@ model User {
   name      String
   password  String
   avatar    String?
+  publication Publication[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -28,6 +29,8 @@ model Publication {
   dateToPublish DateTime
   published     Boolean  @default(false)
   socialMedia   String
+  userId Int
+  user User @relation(fields:[userId], references: [id])
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
