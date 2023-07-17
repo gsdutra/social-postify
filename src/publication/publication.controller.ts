@@ -1,34 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Req, Get, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { PublicationService } from './publication.service';
 import { CreatePublicationDto } from './dto/create-publication.dto';
 import { UpdatePublicationDto } from './dto/update-publication.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
+import CustomRequest from 'src/interfaces/custom-request.interface'
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('publication')
 export class PublicationController {
-  constructor(private readonly publicationService: PublicationService) {}
+  constructor(private readonly publicationService: PublicationService) { }
 
+  @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createPublicationDto: CreatePublicationDto) {
-    return this.publicationService.create(createPublicationDto);
+  create(@Body() createPublicationDto: CreatePublicationDto, @User() user: any) {
+    return this.publicationService.create({
+      ...createPublicationDto,
+      userId: Number(user.id)
+    });
   }
 
+  @UseGuards(AuthGuard)
   @Get()
-  findAll() {
-    return this.publicationService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.publicationService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePublicationDto: UpdatePublicationDto) {
-    return this.publicationService.update(+id, updatePublicationDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.publicationService.remove(+id);
+  findByUserId(id: number) {
+    return this.publicationService.findByUserId(id);
   }
 }

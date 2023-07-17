@@ -19,7 +19,11 @@ export class UserRepository {
   }
 
   async findOne(id: number) {
-    return `This action returns a #${id} user`;
+    return this.prisma.user.findUnique({
+      where: {
+        id
+      }
+    });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
